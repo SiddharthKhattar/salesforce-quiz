@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salesforce Admin Practice & 55-Q Mock Exam</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f6f9;
+      color: #1e293b;
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #ffffff;
+      border-bottom: 1px solid #cbd5e1;
+      padding: 12px 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .mode-tabs {
+      max-width: 960px;
+      margin: 0 auto 12px;
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+    .mode-tab {
+      padding: 10px 18px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+      cursor: pointer;
+    }
+    .mode-tab.active {
+      background: #1e40af;
+      color: #ffffff;
+      border-color: #1e40af;
+    }
+    .top-bar {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .score-box {
+      font-weight: 600;
+      font-size: 0.92rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .score-pill {
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #bfdbfe;
+    }
+    .status-pill {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+    .status-progress {
+      background: #fef9c3;
+      color: #854d0e;
+      border: 1px solid #fde047;
+    }
+    .status-pass {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+    .status-fail {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 13px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .btn-shuffle {
+      background: #ede9fe;
+      color: #5b21b6;
+      border: 1px solid #ddd6fe;
+    }
+    .btn-shuffle:hover { background: #ddd6fe; }
+    .btn-grade-all {
+      background: #059669;
+      color: #ffffff;
+    }
+    .btn-grade-all:hover { background: #047857; }
+    .btn-reset-cat {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+    .btn-reset-cat:hover { background: #e2e8f0; }
+    .btn-reset-all {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+    .btn-reset-all:hover { background: #fecaca; }
+    .cat-nav {
+      max-width: 960px;
+      margin: 12px auto 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .cat-btn {
+      background: #f8fafc;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      padding: 6px 11px;
+      font-size: 0.82rem;
+      border-radius: 6px;
+    }
+    .cat-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+    main {
+      max-width: 960px;
+      margin: 24px auto 60px;
+      padding: 0 16px;
+    }
+    .cat-header {
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .cat-header h2 { margin: 0; font-size: 1.35rem; }
+    .mock-banner {
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .mock-banner.pass {
+      display: block;
+      border-color: #22c55e;
+      background: #f0fdf4;
+      color: #14532d;
+    }
+    .mock-banner.fail {
+      display: block;
+      border-color: #ef4444;
+      background: #fef2f2;
+      color: #7f1d1d;
+    }
+    .q-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .q-title {
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #e0e7ff;
+      color: #3730a3;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-cat {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #f1f5f9;
+      color: #475569;
+      margin-right: 6px;
+      vertical-align: middle;
+      font-weight: 500;
+    }
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .opt-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.1s;
+    }
+    .opt-label:hover { background: #f8fafc; }
+    .opt-label input { margin-top: 4px; transform: scale(1.15); }
+    .opt-label.correct {
+      background: #dcfce7;
+      border-color: #22c55e;
+      color: #14532d;
+      font-weight: 600;
+    }
+    .opt-label.wrong {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+    }
+    .btn-check {
+      background: #2563eb;
+      color: white;
+    }
+    .btn-check:hover { background: #1d4ed8; }
+    .btn-check:disabled {
+      background: #94a3b8;
+      cursor: default;
+    }
+    .feedback {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .feedback.pass {
+      display: block;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+    .feedback.fail {
+      display: block;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<header>
+  <!-- Mode Switcher Tabs -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tabCatBtn" onclick="switchMode('category')">📚 Category Practice (10 Categories)</button>
+    <button class="mode-tab" id="tabMockBtn" onclick="switchMode('mock')">🎯 Mock Exam (55 Random Qs • 70% to Pass)</button>
+  </div>
+
+  <!-- Category Practice Top Bar -->
+  <div id="catTopBar">
+    <div class="top-bar">
+      <div class="score-box">
+        <span class="score-pill" id="catScore">Category: 0 / 0 (0%)</span>
+        <span class="score-pill" id="totalScore">Total: 0 / 0 (0%)</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn-shuffle" onclick="shuffleCurrentCategory()">🔀 Shuffle Category</button>
+        <button class="btn-reset-cat" onclick="resetCurrentCategory()">Reset Category</button>
+        <button class="btn-reset-all" onclick="resetAllCategories()">Restart All Categories</button>
+      </div>
+    </div>
+    <div class="cat-nav" id="catNav"></div>
+  </div>
+
+  <!-- Mock Exam Top Bar -->
+  <div id="mockTopBar" class="hidden">
+    <div class="top-bar">
+      <div class="score-box">
+        <span class="score-pill" id="mockProgress">Answered: 0 / 55</span>
+        <span class="score-pill" id="mockScore">Score: 0 / 55 (0%)</span>
+        <span class="status-pill status-progress" id="mockPassBadge">Pass Target: 70% (39/55)</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn-grade-all" onclick="gradeAllMock()">✅ Grade All Answers</button>
+        <button class="btn-reset-all" onclick="generateNewMockExam()">🔄 New 55-Q Mock Exam</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Category View -->
+  <div id="categoryView">
+    <div class="cat-header">
+      <h2 id="catTitle">Category</h2>
+    </div>
+    <div id="questionsContainer"></div>
+  </div>
+
+  <!-- Mock Exam View -->
+  <div id="mockView" class="hidden">
+    <div class="cat-header">
+      <h2>🎯 Mock Exam: 55 Random Questions (Need 70% / 39 Correct to Pass)</h2>
+    </div>
+    <div id="mockResultBanner" class="mock-banner"></div>
+    <div id="mockQuestionsContainer"></div>
+    <div style="margin-top: 20px; display: flex; gap: 12px;">
+      <button class="btn-grade-all" style="padding: 12px 20px; font-size: 1rem;" onclick="gradeAllMock()">✅ Submit & Grade All 55 Questions</button>
+      <button class="btn-reset-all" style="padding: 12px 20px; font-size: 1rem;" onclick="generateNewMockExam()">🔄 Generate New 55-Q Mock Exam</button>
+    </div>
+  </div>
+</main>
+
+<script>
+const QUIZ_DATA = [
+  // ================= CATEGORY 1: REPORTS & DASHBOARDS =================
+  {
+    category: "1. Reports & Dashboards",
+    questions: [
+      { id: 1, req: 1, q: "Cloud Kicks wants a report to categorize accounts into small, medium, and large based on the dollar value found in the Contract Value field. Which feature should a Platform Administrator use to meet this request?", options: ["A. Group Rows", "B. Filter Logic", "C. Detail Column", "D. Bucket Column"], ans: ["D"], hook: "Group values into small/medium/large" },
+      { id: 3, req: 1, q: "Cloud Kicks is concerned that not everyone on the sales team is entering key data into accounts and opportunities that they own, and that if key information changes, it does not get updated in Salesforce. A Platform Administrator wants to get a better understanding of their data quality and record completeness. What should the administrator do to accomplish this?", options: ["A. Explore AppExchange for data quality and record completeness solutions.", "B. Create a report for Accounts and Opportunities highlighting missing data.", "C. Subscribe the sales reps to a monthly report for accounts and opportunities.", "D. Configure the key fields as required fields on the page layout."], ans: ["B"], hook: "\"Understand\" means report" },
+      { id: 12, req: 1, q: "Northern Trail Outfitters has the Case object set to private. The support manager raised a concern that reps have a broader view of data than expected and can see all cases on their group's dashboards. What is causing reps to have inappropriate access to data on dashboards?", options: ["A. Dashboard Filters", "B. Public Dashboards", "C. Dashboard's running user", "D. Dashboard Subscriptions"], ans: ["C"], hook: "Reps see what the running user sees" },
+      { id: 26, req: 1, q: "How should a Platform Administrator provide users with individualized views of data on a dashboard?", options: ["A. Add a Dashboard Filter to change the dashboard view.", "B. Create a Dynamic Dashboard.", "C. Set View Dashboard As to Me.", "D. Set View Dashboard As to Another person."], ans: ["B"], hook: "Each viewer sees their own data" },
+      { id: 33, req: 1, q: "A sales manager at Cloud Kicks would like a dashboard to emphasize some important data and tell a more compelling data story to the sales reps. How should a Platform Administrator achieve this for the sales manager?", options: ["A. Use a Text Widget.", "B. Assign a new Task to each rep.", "C. Use the Highlights Panel.", "D. Send out a mass email."], ans: ["A"], hook: "Adds emphasis and story" },
+      { id: 45, req: 1, q: "A Platform Administrator wants to limit the kinds of reports their users can create. Which tool should the administrator use?", options: ["A. Hide Report Types", "B. Report Folder Sharing", "C. Standard Report Types", "D. Joined Report"], ans: ["A"], hook: "Limits what users can build" },
+      { id: 52, req: 1, q: "Management at Universal Containers would like to share dashboard components with their team in Chatter but currently does not have access to this capability. How should a Platform Administrator make this functionality available to management?", options: ["A. Enable reporting snapshots.", "B. Select Download Chart on the component.", "C. Set View Dashboard As to the dashboard viewer.", "D. Enable dashboard feed tracking."], ans: ["D"], hook: "Needed to share components in Chatter" },
+      { id: 57, req: 1, q: "A sales manager receives a URL to a Dashboard folder containing several dashboards. However, when the sales manager clicks on the URL, a message appears stating, \"We couldn't find the record you're trying to access.\" What is the reason for this?", options: ["A. The sales manager does not have the correct permission set.", "B. The sales manager needs the correct sales user profile.", "C. The Dashboard folder is set to Private.", "D. View access has not been granted to the Dashboard folder."], ans: ["D"], hook: "\"Couldn't find record\" means no folder access" },
+      { id: 75, req: 1, q: "A group of sales reps can view each other's orders on a report; however, they would like a report to view just their own orders. What should a Platform Administrator do to set up a report for the sales reps?", options: ["A. Set the Opportunity Filter for Primary as True.", "B. Filter by Opportunity Owner equals $USER.", "C. Set Organization Wide Defaults of Order object to Private.", "D. Save the report in a private folder for the user."], ans: ["B"], hook: "\"My\" records only" },
+      { id: 78, req: 1, q: "Cloud Kicks has three teams of customer service reps that use a custom field on the Case object to populate the team assigned to manage the tickets. The customer support manager would like a Custom Dashboard to show data specific to each team. What should a Platform Administrator do to meet this requirement?", options: ["A. Create separate Dashboards for each Customer Support team.", "B. Create a Dashboard with widgets specific to each team.", "C. Create a Dashboard that uses Dashboard filters to show specific team data.", "D. Add Cross Filters to switch between the three customer service teams."], ans: ["C"], hook: "One dashboard, filtered per team" },
+      { id: 85, req: 1, q: "A sales rep wants to be able to categorize multiple picklist values into a single value on a report. Which option should a Platform Administrator suggest to the sales rep to accomplish this?", options: ["A. Bucket Column", "B. Unique Count", "C. Report Filter", "D. Chart"], ans: ["A"], hook: "Group values into categories" },
+      { id: 101, req: 1, q: "Users at DreamHouse Realty are only allowed to see opportunities they own. Leadership wants an enterprise-wide dashboard of all open opportunities in the pipeline so that users can see how the company is performing at any point in time. How should a Platform Administrator create the dashboard without changing any sharing settings?", options: ["A. Create a dashboard with the running user set as someone who can see all opportunities.", "B. Add a filter to the dashboard to filter the opportunities by owner role.", "C. Build individual dashboards for profiles that need to see the enterprise results.", "D. Update the dashboard folder settings to manager for the sales reps role."], ans: ["A"], hook: "Changes no sharing settings" },
+      { id: 121, req: 1, q: "A sales rep typically has several open opportunities for each of their accounts. Which tool should a Platform Administrator suggest to the sales rep to obtain the total number of accounts associated with open opportunities in a report?", options: ["A. Bucket Column", "B. Report Filter", "C. Unique Count", "D. Group Rows"], ans: ["C"], hook: "Counts distinct accounts" },
+      { id: 136, req: 1, q: "A Platform Administrator at Cloud Kicks needs to temporarily remove one dashboard from a shared folder with several dashboards to make some required changes. How should the administrator achieve this?", options: ["A. Remove View access to the shared folder.", "B. Edit the dashboard properties and move it to a private dashboards folder.", "C. Remove the permission set to the dashboard from the users.", "D. Create a private group and add the dashboard to it."], ans: ["B"], hook: "Temporary removal" },
+      { id: 139, req: 1, q: "The call center manager at Ursa Major Solar wants to provide agents with a case dashboard that can be drilled down by case origin, status, and owner. What should a Platform Administrator add to the dashboard to fulfill the request?", options: ["A. Dashboard Filter", "B. Dashboard Widget", "C. Combination Chart", "D. Bucket Column"], ans: ["A"], hook: "Drill by origin, status, owner" },
+      { id: 145, req: 1, q: "The sales and service teams at Cloud Kicks would like to have more visibility into their pipeline and stay on top of every case. A Platform Administrator needs to quickly create dashboards for each of the teams but does not know where to start. What should the administrator do?", options: ["A. Use the Salesforce Labs Field Service Dashboards for service teams from AppExchange.", "B. Enable Einstein Analytics and build custom dashboards using advanced analytics tools.", "C. Use the Salesforce Labs CRM Dashboards for sales teams from AppExchange.", "D. Manually create dashboards without using any prebuilt templates or packages."], ans: ["C"], hook: "Prebuilt, so don't start from scratch" }
+    ]
+  },
+
+  // ================= CATEGORY 2: AGENTFORCE =================
+  {
+    category: "2. Agentforce",
+    questions: [
+      { id: 11, req: 1, q: "Cloud Kicks has implemented an Employee Agent to answer benefits questions for its employees. How should a Platform Administrator prevent the agent from responding to staff members' questions about the CEO's private health plan and benefits?", options: ["A. Configure assignment rules to assign the agent to employee data.", "B. Ensure the users' permissions and field-level security restrict access to the CEO's health plan.", "C. Modify the agent's instructions and guardrails to block questions related to the CEO's health plan.", "D. Train the agent on employee health plans instead of the CEO's health plan."], ans: ["B"], hook: "Agents inherit user access, and instructions are not security" },
+      { id: 41, req: 1, q: "A Platform Administrator is building an agent to nurture leads. How does Agentforce SDR help?", options: ["A. Generate a dynamic call script and talking points for the human sales reps to use.", "B. Autonomously negotiate pricing with the lead and close the final deal.", "C. Analyze the performance of human sales reps and provide coaching tips.", "D. Answer the lead's questions with responses that are grounded in company data."], ans: ["D"], hook: "SDR nurtures leads using company data (Corrected)" },
+      { id: 46, req: 1, q: "Agentforce is escalating cases to the support team, but the support team complains they have no context and have to ask the customer to repeat everything. Which configuration issue is the most likely cause of this issue?", options: ["A. The support team members are missing the Agentforce User permission set.", "B. The support team's case page layout is missing the agent history component.", "C. The agent's instructions are preventing the history and context from being saved.", "D. The handoff is creating a new case instead of transferring the existing session."], ans: ["D"], hook: "Handoff creating a new case loses context" },
+      { id: 51, req: 1, q: "A Platform Administrator created a new prompt template and is testing it. Every time the administrator tests the template, it gives a different response. Why is the prompt template giving different responses each time it's run?", options: ["A. Prompt Builder caches the large language model's response, so the prompt is only sent once for every template the administrator creates.", "B. Every time the administrator runs a prompt template in Prompt Builder, it creates a unique call to the large language model.", "C. The prompt is only sent to the large language model after the administrator deploys the template to a live agent, not when the prompt is run in the builder.", "D. Prompt Builder runs a simulated call to the large language model to save on costs, so the prompt is never sent to the actual model."], ans: ["B"], hook: "Each run is a unique LLM call" },
+      { id: 54, req: 1, q: "What is an Agentforce use case in a sales organization?", options: ["A. Generating cold calls", "B. Automating all marketing content", "C. Providing basic web bot chats", "D. Automating Lead Qualification"], ans: ["D"], hook: "Sales use case" },
+      { id: 63, req: 1, q: "A Platform Administrator is creating a new action instruction for an agent. This action, named createCase, is designed to generate a new Salesforce Case record based on the user's conversation with the agent. Which set of Action Instructions should the administrator use according to best practices?", options: ["A. \"This action provides the ability to create a new case record in the Salesforce system. Its function is to simply save customer information as a record. Use this when the user wants to create a case.\"", "B. \"Use this action to create a new Salesforce Case record. The goal is to document a customer's issue in the system. Use this when the user's intent is to create a formal record of their problem or question.\"", "C. \"Creates a new case record in the system for any type of customer inquiry. The purpose of this is to ensure a record of the interaction is saved.\"", "D. \"The createCase code snippet is configured to create a case. It runs in the background to handle the user's request to log a new issue. Its purpose is to solve the customer's issue.\""], ans: ["B"], hook: "Instructions that state purpose, goal, and when to use" },
+      { id: 73, req: 1, q: "A Platform Administrator is designing a prompt template for a new agent. The agent's purpose is to help service reps troubleshoot technical issues by providing concise, step-by-step instructions. Based on best practices for creating effective prompts, which approach should the administrator use?", options: ["A. Write a detailed prompt with multiple nested conditions to cover all the major troubleshooting scenarios.", "B. Use specific technical terms and abbreviations to ensure the AI understands the specialised domain.", "C. Focus on providing high-level, theoretical concepts so the AI has the flexibility to respond creatively.", "D. Use natural, easy-to-understand language and clear, concise instructions to guide the AI's behavior."], ans: ["D"], hook: "Natural, concise language" },
+      { id: 76, req: 1, q: "When Agentforce performs its grounding check, it examines source information, the topic instructions, and scope. Which additional information does the agent look for during its grounding check?", options: ["A. Incompatible data types", "B. Prompt injection risks", "C. Encrypted fields", "D. The web for information verification"], ans: ["B"], hook: "Grounding check looks for prompt injection risks" },
+      { id: 80, req: 1, q: "A Platform Administrator is adding a new topic to an agent. What is best practice for topic instructions?", options: ["A. Write the instructions generically to allow the agent maximum flexibility in its reasoning.", "B. Include an extended list of example user questions so the agent can learn from patterns.", "C. Keep instructions as minimal as possible to reduce agent latency.", "D. Add business-specific language rather than plain language."], ans: ["B"], hook: "Include example user questions so the agent learns from patterns (Corrected)" },
+      { id: 98, req: 1, q: "A new agent is being developed to help customer service reps process customer requests for a replacement product. The agent needs to call an action that takes two inputs: productId (An 18 character ID) and reasonCode (A three-digit code). Which set of agent instructions should a Platform Administrator use?", options: ["A. Instructions for productId: \"The 18 character ID of the product.\" Instructions for reasonCode: \"A numerical code.\"", "B. Instructions for productId: \"The product ID. Retrieve this from the conversation history or the user's input.\" Instructions for reasonCode: \"The three-digit replacement reason. This is required when the product ID is present.\"", "C. Instructions for productId: \"ID from the product record.\" Instructions for reasonCode: \"Code for the reason.\"", "D. Instructions for productId: \"The 18 character ID of the product. Retrieve this from the conversation history or the user's input. Required.\" Instructions for reasonCode: \"A three-digit code that specifies the reason for replacement. This is required only when the product ID is present.\""], ans: ["D"], hook: "Describe the input, where to find it, and when it's required" },
+      { id: 105, req: 1, q: "Which task is especially suited for Agentforce?", options: ["A. Single-step predefined processes", "B. Static document generation", "C. Multi-step processes that need adaption to change", "D. Tasks without decision-making"], ans: ["C"], hook: "Agentforce strength" },
+      { id: 109, req: 1, q: "A Platform Administrator needs to enable Agentforce for the service team. What is the most critical prerequisite for ensuring the Service Agents have a complete and accurate view of their customers?", options: ["A. Activate Email-to-Case for the agent.", "B. Configure a new Service Console layout.", "C. Verify Data Cloud is implemented.", "D. Create new user profiles for the agent."], ans: ["C"], hook: "Complete customer view" },
+      { id: 125, req: 1, q: "A Platform Administrator deactivates an agent to add a new topic and action. What happens to any ongoing user conversations with the agent?", options: ["A. The agent will pause the conversation and resume once reactivated.", "B. The agent will continue conversations using the deactivated agent until reactivated.", "C. The agent window automatically closes to prevent new messages.", "D. The agent will send a system error message as a response to any new messages."], ans: ["D"], hook: "Sends a system error message to any new messages (Corrected)" },
+      { id: 140, req: 1, q: "A Platform Administrator is building an agent to help an ecommerce support team. The agent needs to call an action, named updateShippingAddress, that modifies a customer's shipping address in the system. Which set of Action Instructions should the administrator use?", options: ["A. \"Use this to update shipping information. It's used for any changes to a customer's address in the system.\"", "B. \"This action updates the customer's shipping address. It is to be used when a user wants to change their address. Only use this when a customer does not have an active order in the system.\"", "C. \"This action allows for the changing of a shipping address, and the goal is to make sure the address is current and accurate.\"", "D. \"Updates the shipping address for a customer order. The goal of the action is to modify the address on a customer's record. The agent should only use this action when the user explicitly requests to change their address.\""], ans: ["D"], hook: "State purpose, goal, and \"only when...\"" },
+      { id: 141, req: 1, q: "An agent is being developed with several actions that all retrieve information from different databases: GetCustomerInfo, GetOrderDetails, GetShippingStatus. Which best practice should the administrator follow to improve these names?", options: ["A. Remove all verbs and use only nouns, such as CustomerInfo, OrderDetails, and ShippingStatus.", "B. Add the word \"Salesforce\" to the beginning of each action name to improve context for the large language model.", "C. Use a consistent naming convention by starting each action with the verb \"Get\".", "D. Use additional related verbs, such as Find, Retrieve, or Identify."], ans: ["C"], hook: "Consistent verb naming (Get...)" },
+      { id: 144, req: 1, q: "What is the next step an agent performs when the tasks within an agentic loop are all unsatisfactory?", options: ["A. Provides the best answer possible with caveats", "B. Gives an error message", "C. Routes to a live agent", "D. Asks for additional information"], ans: ["D"], hook: "Agent loop fallback" },
+      { id: 146, req: 1, q: "Cloud Kicks wants Agentforce to adapt its behavior based on real-time customer input. Which feature directly enables this capability?", options: ["A. Data Cloud", "B. Custom actions", "C. Screen flow", "D. Tableau"], ans: ["A"], hook: "Real-time data" }
+    ]
+  },
+
+  // ================= CATEGORY 3: APPROVALS =================
+  {
+    category: "3. Approvals",
+    questions: [
+      { id: 8, req: 2, q: "A Platform Administrator at Cloud Kicks has created an approval process for time-off requests. Which two automated actions are available for the administrator to add as part of the approval process?", options: ["A. Field Update", "B. Email Alert", "C. Chatter Post", "D. Autolaunched Flow"], ans: ["A", "B"], hook: "Also Task and Outbound Message" },
+      { id: 18, req: 1, q: "The Cloud Kicks CFO requires any opportunity over $100,000 to be automatically sent to them, so they can sign off on the record before the deal closes. Which feature should a Platform Administrator use to fulfill this requirement?", options: ["A. Submit for Approval button", "B. Einstein Next Best Action", "C. Apex Triggers", "D. Flow Approvals"], ans: ["D"], hook: "Auto-send over $100k" },
+      { id: 29, req: 1, q: "Which Salesforce feature allows a Platform Administrator to automate the routing of records to specific users for review and decision-making based on predefined criteria?", options: ["A. Assignment Rules", "B. Validation Rules", "C. Approval Process", "D. Schema Builder"], ans: ["C"], hook: "Routes for review and decision (Corrected)" },
+      { id: 31, req: 2, q: "Ursa Major Solar wants to assist users with a guided expense report process to simplify submissions, routing, and authorizations. Which two tools should a Platform Administrator use to build this solution?", options: ["A. Validation Rule", "B. Quick Action", "C. Flow Builder", "D. Approval Process"], ans: ["C", "D"], hook: "Guided steps plus authorization" },
+      { id: 58, req: 1, q: "A Platform Administrator needs to configure an approval process for the sales team when opportunities that meet particular conditions are closed. How should the administrator make sure the right records are included in the process?", options: ["A. Add Specific Entry Criteria.", "B. Use Dynamic Forms to display a button.", "C. Create a screen flow.", "D. Add a validation rule to the opportunity."], ans: ["A"], hook: "Decides which records enter" },
+      { id: 81, req: 1, q: "A Platform Administrator at Cloud Kicks has a request from the finance team that all won opportunities over a certain value must be checked for accuracy before the deal can be considered fully closed. The seller's manager must sign off first, and then the finance team member must sign off, for a total of up to three sign-offs per opportunity. How should the administrator address this request?", options: ["A. Create a screen flow that runs anytime an opportunity is closed.", "B. Add a Lightning web component to the opportunity page to capture the details in an approval record.", "C. Create a quick action to send emails to both the manager and the finance team member.", "D. Create an approval process with specific steps."], ans: ["D"], hook: "Sequential sign-offs" },
+      { id: 89, req: 1, q: "A Platform Administrator at Cloud Kicks received a request from the head of sales operations to create a process in which opportunities must be validated by specific team leaders based on 30 potential sets of criteria. How should the administrator fulfill this request?", options: ["A. Create a button on the opportunity that brings up an email template to send to the correct leader.", "B. Create an approval process with specific entry criteria and approval steps for each of the sets of criteria specified.", "C. Create a record triggered flow orchestration to properly route the requests.", "D. Use a screen flow to allow the seller to input the criteria in a form that is then sent to the appropriate leader."], ans: ["C"], hook: "30 criteria sets means too complex for a standard process" },
+      { id: 108, req: 1, q: "DreamHouse Realty has an approval process. A manager attempts to approve a record but receives an error. What should a Platform Administrator do to troubleshoot this issue?", options: ["A. Check if the user in the next approver is inactive or missing.", "B. Review the page layout to ensure the fields updated in the process are visible.", "C. Update the field-level security to view on fields that are updated in the process.", "D. Add a delegated approver for the next approver in the process."], ans: ["A"], hook: "Approval error" },
+      { id: 110, req: 2, q: "Northern Trail Outfitters wants to initiate expense reports from Salesforce to the external HR system. Managers and directors need to review this process. Which two tools should a Platform Administrator configure?", options: ["A. Outbound Message", "B. Email Alert Action", "C. Quick Action", "D. Approval Process"], ans: ["A", "D"], hook: "External system plus review" },
+      { id: 130, req: 1, q: "In an approval process, which feature allows a user to temporarily assign their approval responsibilities to another user for a predefined time period?", options: ["A. Approval Rule", "B. Queue", "C. Delegated Approver", "D. Manager"], ans: ["C"], hook: "Temporary handoff" },
+      { id: 138, req: 1, q: "In an approval process, what happens when a queue is selected as the approver?", options: ["A. The queue requires unanimous approval from all of its members before the record is approved.", "B. Any member of the queue can approve or reject the record and the queue is treated as a single entity.", "C. Only the queue owner is notified about the approval request, not its members.", "D. The queue can only be used for objects that do not support individual user approvals."], ans: ["B"], hook: "Any member can act" },
+      { id: 147, req: 1, q: "Which action should a Platform Administrator configure to reverse a submitted approval request and unlock the associated record when setting up an approval process?", options: ["A. Final Rejection Actions", "B. Recall Actions", "C. Final Approval Actions", "D. Initial Submission Actions"], ans: ["B"], hook: "Reverses and unlocks" },
+      { id: 148, req: 1, q: "Which component of an approval process defines the chain of approval, determines which records can advance, and specifies where to assign approval requests?", options: ["A. Process Definition Detail", "B. Approval Steps", "C. Entry Criteria", "D. Approval Actions"], ans: ["B"], hook: "Defines the approval chain" }
+    ]
+  },
+
+  // ================= CATEGORY 4: SALES FEATURES =================
+  {
+    category: "4. Sales Features",
+    questions: [
+      { id: 19, req: 1, q: "Universal Containers wants to implement collaborative selling where multiple roles work together on customer accounts. The sales manager wants to streamline the process by automatically adding the same team members to multiple accounts. Which feature should a Platform Administrator configure?", options: ["A. Set up default account teams with specified access levels for different team roles.", "B. Create sharing rules to grant access to opportunities and cases for support teams.", "C. Configure role hierarchy to automatically grant account access to the appropriate teams.", "D. Use permission sets to provide additional access to account-related records."], ans: ["A"], hook: "Auto-add the same team" },
+      { id: 22, req: 1, q: "A sales rep at Ursa Major Solar has launched a series of networking events. They are hosting one event per month and want to be able to report on Campaign ROI by month and series. How should a Platform Administrator set up the Campaign to simplify reporting?", options: ["A. Create individual Campaigns that all have the same name.", "B. Configure Campaign Member Statuses to record which event Members attended.", "C. Use Campaign Hierarchy where the monthly events roll up to a parent Campaign.", "D. Add different record types for the monthly event types."], ans: ["C"], hook: "Parent rolls up the series (Corrected)" },
+      { id: 30, req: 1, q: "The Cloud Kicks sales team has asked that two of the fields that appear on the Opportunity cards in Kanban view be changed to make the cards more meaningful. Which feature should a Platform Administrator access to make this change?", options: ["A. Record Type", "B. Compact Layout", "C. Page Layout", "D. Kanban Settings"], ans: ["D"], hook: "Controls Kanban card fields" },
+      { id: 35, req: 1, q: "Senior leadership wants to be notified of any opportunities over $250,000 with more than a 75% probability of closing. Which feature should a Platform Administrator set up to facilitate this?", options: ["A. Guidance for Success", "B. Big Deal Alerts", "C. Reports and Dashboards", "D. Similar Opportunities"], ans: ["B"], hook: "High amount + high probability" },
+      { id: 36, req: 1, q: "Sales reps at Ursa Major Solar are having difficulty managing deals. The leadership team has asked a Platform Administrator to help sales reps prioritize and close more deals. What should the administrator configure?", options: ["A. Einstein Search Personalization", "B. Einstein Lead Scoring", "C. Einstein Opportunity Scoring", "D. Einstein Activity Capture"], ans: ["C"], hook: "Prioritize deals" },
+      { id: 48, req: 1, q: "A Platform Administrator at Ursa Major Solar wants to add prepopulated subjects for Tasks and Events. Tasks should have \"Schedule Site Visit\" and \"Send Contract\", while Events should have \"Site Visit\" and \"Ride Along\". What should the administrator configure?", options: ["A. Add the new values to the predefined field values for the global actions New Event and New Task.", "B. Add Schedule Site Visit and Send Contract picklist values for the Task subject field. Add Site Visit and Ride Along picklist values for the Event subject field.", "C. Create a new custom Subject picklist field on Activity and add the field values.", "D. Include Schedule Site Visit, Send Contract, Site Visit, and Ride Along picklist values for the Activity subject field."], ans: ["B"], hook: "Set separately" },
+      { id: 50, req: 1, q: "A Platform Administrator at Cloud Kicks would like to track details around emails, trade shows, and webinars. Additionally, each of these initiatives will need to track different types of information. How should the administrator accomplish this?", options: ["A. Create a custom report type with relevant fields.", "B. Create a custom field on the Campaign object for the type of initiative.", "C. Create record types and page layouts for each type of campaign.", "D. Use campaign hierarchies to organize campaign types."], ans: ["C"], hook: "Different info per type" },
+      { id: 53, req: 3, q: "Sales reps miss key fields when filling out an opportunity record through the sales process. Reps need to move forward in stages but are unable to enter a previous stage. Which three options should a Platform Administrator use to address this need?", options: ["A. Mark fields required on the page layout.", "B. Use Flow to mark fields required.", "C. Configure Opportunity Path.", "D. Use validation rules.", "E. Enable guided selling."], ans: ["A", "C", "D"], hook: "Guide and enforce stages" },
+      { id: 84, req: 1, q: "Sales managers would like to know what could be implemented to surface important values based on the stage of the opportunity. Which tool should a Platform Administrator use?", options: ["A. Workflow Rules", "B. Path Key Fields", "C. Opportunity Processes", "D. Dynamic Forms"], ans: ["B"], hook: "Per-stage fields" },
+      { id: 99, req: 2, q: "The sales director at Cloud Kicks wants to be able to predict upcoming revenue in the next several fiscal quarters so they can set goals and benchmark how reps are performing. Which two features should a Platform Administrator configure?", options: ["A. Sales Quotes", "B. Forecasting", "C. Opportunity List View", "D. Opportunity Stages"], ans: ["B", "D"], hook: "Revenue prediction" },
+      { id: 103, req: 1, q: "A sales manager at DreamHouse Realty wants sales users to have a quick way to view and update the opportunities in their pipeline expected to close in the next 90 days. What should a Platform Administrator do?", options: ["A. Create a custom report and schedule the sales users to receive it each day as a reminder to update their opportunities.", "B. Make a new Sales dashboard and add a component that shows all opportunities that meet the criteria.", "C. Enable Sales Console and show users how to open a tab for each opportunity in the pipeline that meets the requirements.", "D. Create a list view on the Opportunity object and recommend users switch the view to Kanban to edit by drag and drop."], ans: ["D"], hook: "Drag-and-drop pipeline" },
+      { id: 112, req: 1, q: "A manager wants the sales team to update their opportunities on a regular basis. Which feature should a Platform Administrator implement to help with this?", options: ["A. Similar Opportunities", "B. Opportunity Update Reminders", "C. Big Deal Alerts", "D. Scheduled Reports"], ans: ["B"], hook: "Prompts reps to update" },
+      { id: 115, req: 1, q: "The Universal Containers sales team wants a visual way to manage their opportunity pipeline that allows them to see all deals at once, track progress through sales stages, and quickly move opportunities forward. Which feature should a Platform Administrator recommend?", options: ["A. Set up opportunity reports with chart components and stage-based grouping.", "B. Create a custom dashboard with opportunity pipeline charts and stage metrics.", "C. Use the Kanban view for opportunities with card fields and drag-and-drop functionality.", "D. Configure opportunity list views with custom filters and summary fields."], ans: ["C"], hook: "Drag-and-drop pipeline" },
+      { id: 124, req: 1, q: "When a qualified lead is converted, what happens to its related records?", options: ["A. Records from custom objects are attached to the resulting contact, account, and opportunity records.", "B. Open activities only are attached to the resulting contact, account, and opportunity records.", "C. All activities are attached to the resulting contact, account, and opportunity records.", "D. Campaign history is attached to the resulting contact, account, and opportunity records."], ans: ["C"], hook: "All activities attach (Corrected)" },
+      { id: 129, req: 1, q: "Which feature gives a sales team the ability to prioritize deals with recent updates in the List view and Kanban view?", options: ["A. Big Deal Alerts", "B. Report Filters", "C. Deal Change Highlights", "D. Opportunity Path"], ans: ["C"], hook: "Recent updates in list/Kanban" },
+      { id: 131, req: 1, q: "A sales team is having difficulty understanding which stage their opportunity is in and what the company sales process requires of them in that stage. Which feature should a Platform Administrator implement?", options: ["A. Reports & Dashboards", "B. Opportunity Sales Path", "C. Big Deal Alerts", "D. List Views"], ans: ["B"], hook: "Stage guidance" },
+      { id: 135, req: 1, q: "Universal Containers wants to track all stakeholders involved in its sales opportunities to identify who has decision-making authority, who influences the buying process, and who serves as the primary contact for each deal. Which feature should a Platform Administrator configure?", options: ["A. Configure opportunity team members to track internal and external stakeholders.", "B. Set up account teams to track stakeholders across multiple opportunities.", "C. Use standard fields on opportunities to track stakeholder information.", "D. Use contact roles on opportunities to identify stakeholder involvement and influence."], ans: ["D"], hook: "Decision maker, influencer" }
+    ]
+  },
+
+  // ================= CATEGORY 5: DATA MODEL & FIELDS =================
+  {
+    category: "5. Data Model & Fields",
+    questions: [
+      { id: 4, req: 1, q: "Northern Trail Outfitters has two different sales processes: one for business opportunities with four stages and one for partner opportunities with eight stages. Both processes will vary in page layouts and picklist value options. What should a Platform Administrator configure?", options: ["A. Different page layouts that control the picklist values for the opportunity types", "B. Separate record types and sales processes for the different types of opportunities", "C. Validation rules that ensure that users are entering accurate sales stage information", "D. Public groups to limit record types and sales processes for opportunities"], ans: ["B"], hook: "Different stages mean record types" },
+      { id: 13, req: 1, q: "Cloud Kicks wants to leverage roll-up summaries on the Account object. Which standard object supports this roll-up summary natively?", options: ["A. Opportunity", "B. Contact", "C. Case", "D. Campaigns"], ans: ["A"], hook: "Native roll-up on Account" },
+      { id: 37, req: 1, q: "Users at Cloud Kicks are reporting different options when updating a custom picklist on the Opportunity object based on the kind of opportunity. Where should a Platform Administrator update the option in the picklist?", options: ["A. Related lookup filters", "B. Record type", "C. Picklist value sets", "D. Fields and relationships"], ans: ["B"], hook: "Controls picklist values per type" },
+      { id: 40, req: 1, q: "Cloud Kicks uses the standard Account Type field to indicate different account tiers. Management has asked that the field be changed to read \"Tier\" on the page layouts. How should a Platform Administrator implement this change?", options: ["A. Edit the Type field and change the name.", "B. Use Rename Tabs and Labels.", "C. Build a custom field called Tier and delete Type.", "D. Create a global picklist value set."], ans: ["B"], hook: "Relabels standard fields" },
+      { id: 42, req: 2, q: "Universal Containers' Platform Administrator has been asked to create a many-to-many relationship between two existing custom objects. Which two steps should the administrator take?", options: ["A. Create a junction with a custom object.", "B. Create two master-detail relationships on the new object.", "C. Create URL fields on a custom object.", "D. Create two lookup relationships on the new object."], ans: ["A", "B"], hook: "Many-to-many" },
+      { id: 47, req: 1, q: "A Platform Administrator creates a custom text area field on the Account object and wants it to appear in the highlights panel so that the service reps can quickly find it when on the Account page. How should the administrator accomplish this?", options: ["A. In the Account object manager, create a custom compact layout.", "B. Make the field required and move it to the top of the page.", "C. Create a new page layout and a new section titled highlights panel.", "D. From the page layout editor, drag the field to the highlights panel."], ans: ["A"], hook: "Controls the highlights panel" },
+      { id: 49, req: 2, q: "Ursa Major Solar's Platform Administrator is editing the page layout for a new custom object. A text area field is accidentally removed from the page layout, and it needs to be restored. What are two methods for achieving this goal?", options: ["A. Clone the layout from a different profile and use save as.", "B. Restore original page layout from a sandbox.", "C. Restore from the recycle bin within 15 days.", "D. From the fields palette, drag the field into the same position."], ans: ["B", "D"], hook: "Layouts have no recycle bin" },
+      { id: 55, req: 2, q: "Cloud Kicks needs to be able to show different picklist values for sales and marketing users. Which two options meet this requirement?", options: ["A. Two permission sets, one record type, one picklist", "B. One record type, two profiles, one picklist", "C. One page layout, two record types, one picklist", "D. Two page layouts, one record type, two picklists"], ans: ["C", "D"], hook: "Record types or layouts per team" },
+      { id: 64, req: 1, q: "Cloud Kicks has a custom object called Shipments. The company wants to see all the shipment items from an Account page. When an Account is deleted, the shipments should remain. Which type of relationship should a Platform Administrator make?", options: ["A. Accounts should have a lookup to Shipments.", "B. Shipments should have a master detail to Accounts.", "C. Shipments should have a lookup to Account.", "D. Accounts should have a master detail to Shipments."], ans: ["C"], hook: "Lookup means children survive deletion" },
+      { id: 65, req: 1, q: "Northern Trail Outfitters uses a custom Invoice object to collect customer payment information from an external billing system. The Billing System field needs to be filled in on every Invoice record. How should a Platform Administrator ensure this requirement?", options: ["A. Create a flow to update the field.", "B. Require the field on the record type.", "C. Define an approval process for the field.", "D. Make the field universally required."], ans: ["D"], hook: "Required on every record" },
+      { id: 67, req: 1, q: "A user is unable to relate a task to the Course custom object. What should a Platform Administrator do to allow tasks to be related to courses?", options: ["A. Create a sharing rule for the Course object to grant the user Read/Write access.", "B. Select Allow Activities on the Course object in Object Manager.", "C. Add the Open Activities related list to the Course page layout.", "D. Update the user's profile to grant them Edit access to the Task object."], ans: ["B"], hook: "Needed to relate tasks" },
+      { id: 72, req: 1, q: "A Platform Administrator has been asked to change the data type of an auto number to a text field. What should the administrator be aware of before changing the field?", options: ["A. Existing field values will remain unchanged.", "B. Changing Auto Number field to Text is prevented.", "C. Existing field values will be deleted.", "D. Existing field values will be converted."], ans: ["A"], hook: "Auto Number to Text keeps values" },
+      { id: 93, req: 2, q: "Which two data loss considerations should a Platform Administrator keep in mind when changing a custom field type from Text to Picklist?", options: ["A. Auto updates will be made to Visualforce references to prevent data loss.", "B. Any list view based on the custom field is deleted.", "C. There will be no data loss with use of a global value set.", "D. Assignment and escalation rules may be affected."], ans: ["B", "D"], hook: "Text to Picklist side effects" },
+      { id: 95, req: 3, q: "What are three characteristics of a master-detail relationship? (Q95 version)", options: ["A. Permissions for the detail record are set independently of the master.", "B. The master object can be a standard or custom object.", "C. Roll-up summaries are supported in master-detail relationships.", "D. The owner field on the detail records is the owner of the master record.", "E. Each object can have up to five master-detail relationships."], ans: ["B", "C", "D"], hook: "Roll-ups, master can be standard or custom, detail inherits owner" },
+      { id: 102, req: 2, q: "A Platform Administrator at Cloud Kicks has a custom picklist field on Lead, which is missing on the Contact when leads are converted. Which two steps should the administrator take to ensure these values are populated?", options: ["A. Update the picklist value with a validation rule.", "B. Create a custom picklist field on Contact.", "C. Map the picklist field on the Lead to the Contact.", "D. Set the picklist field to be required on the Lead object."], ans: ["B", "C"], hook: "Lead conversion needs both" },
+      { id: 134, req: 3, q: "What are three characteristics of a master-detail relationship? (Q134 version)", options: ["A. Each object can have up to five master-detail relationships.", "B. Permissions for the detail record are set independently of the master.", "C. Roll-up summaries are supported in master-detail relationships.", "D. The master object can be a standard or custom object.", "E. The owner field on the detail records is the owner of the master record."], ans: ["C", "D", "E"], hook: "Roll-ups, master can be standard or custom, detail inherits owner (Corrected)" },
+      { id: 152, req: 1, q: "A Platform Administrator at Ursa Major Solar has been asked to change the Work Item and Project custom object relationship from a master detail to a lookup. Which scenario prevents the administrator from fulfilling this requirement?", options: ["A. A junction object is required to support the lookup.", "B. The lookup field in all the records contains a value.", "C. Roll-up summary fields exist on the master object.", "D. The lookup field is required for saving records."], ans: ["C"], hook: "Blocks master-detail to lookup" }
+    ]
+  },
+
+  // ================= CATEGORY 6: SECURITY & ACCESS =================
+  {
+    category: "6. Security & Access",
+    questions: [
+      { id: 7, req: 1, q: "A VP of sales needs to report on records owned by individuals in various parts of the role hierarchy. The organization-wide default is set to Private. What should a Platform Administrator configure to achieve this?", options: ["A. Field-Level Security", "B. Sharing Rules", "C. Permission Sets", "D. Restriction Rules"], ans: ["B"], hook: "Open up records under a Private OWD" },
+      { id: 10, req: 1, q: "A Platform Administrator at Cloud Kicks is setting up a new Salesforce instance. Marketers must be given access to opportunities to maintain campaign relationships. The administrator assigns the Marketing User profile. What should the administrator do next?", options: ["A. Edit the object permissions to include Opportunity.", "B. Add a custom permission set to include Opportunity.", "C. Edit the role to enable Sales access.", "D. Configure the assigned apps to include Opportunity."], ans: ["B"], hook: "Standard profiles can't be edited for object permissions" },
+      { id: 24, req: 1, q: "A Platform Administrator at Cloud Kicks has set up a junior administrator as a delegated administrator in Salesforce. What should the Platform Administrator consider regarding delegated administrators?", options: ["A. Delegated administrators can unlock users but cannot reset passwords.", "B. Delegated administrators can update field-level security on standard objects.", "C. Delegated administrators cannot modify permission sets.", "D. Delegated administrators cannot assign users to profiles."], ans: ["C"], hook: "They only assign them" },
+      { id: 34, req: 1, q: "Cloud Kicks has an administrator team that manages the org. The company has asked for a small subset of leadership users to have Modify All access, like the administrators have. How should the administrator team accomplish this?", options: ["A. Assign the standard Platform User profile to the leadership users and edit the permissions to Modify All access.", "B. Assign the standard System Administrator profile to the leadership users that includes the Modify All access.", "C. Assign the standard User profile to the leadership users and add a custom permission set with Modify All access.", "D. Clone the standard User profile to the leadership users and assign a Modify All role to grant access."], ans: ["C"], hook: "Never give the System Admin profile" },
+      { id: 39, req: 1, q: "Universal Containers has a private sharing model for Opportunities and uses Opportunity teams. A sales rep leaves the company, is deactivated, and is later rehired and reactivated in the same role and default Opportunity teams, but can no longer see the records they worked on before leaving. What is the likely cause?", options: ["A. The stage of the opportunity records was changed to Closed Lost.", "B. The record type of the opportunity records was changed.", "C. The records were manually shared with the user.", "D. Permission sets were removed when the user was deactivated."], ans: ["C"], hook: "Manual shares are lost on deactivation" },
+      { id: 60, req: 1, q: "A Platform Administrator assigned a custom profile based on the Minimum Access - Salesforce profile to a group of new users and assigned them several existing permission sets. However, when the users log in, they do not see the Lightning interface. Which action should the administrator take?", options: ["A. Enable the Enhanced Interface for User Access Policies.", "B. Add Lightning component to a layout.", "C. Create a page in Lightning App Builder with the org as default.", "D. Assign a permission to enable Lightning Experience User."], ans: ["D"], hook: "Missing permission, so no Lightning" },
+      { id: 61, req: 1, q: "The VP of sales at Cloud Kicks has a standard sales profile and is receiving an error message that prevents them from saving an opportunity. A Platform Administrator attempted the same edit without receiving an error. How should the administrator troubleshoot this issue?", options: ["A. Log in as a system administrator to troubleshoot.", "B. Use 'Login as' to log in as the user.", "C. Use an AppExchange product to troubleshoot.", "D. Ask the user for their password so the admin can log in as the user."], ans: ["B"], hook: "Reproduce the error as them" },
+      { id: 79, req: 2, q: "Cloud Kicks has the organization wide defaults for Opportunity set to Private. Which two features should a Platform Administrator use to open up access to opportunity records for sales users working on collaborative deals?", options: ["A. Sharing rules", "B. Sharing set", "C. Role hierarchy", "D. Profiles"], ans: ["A", "C"], hook: "Both open up access" },
+      { id: 96, req: 1, q: "A Platform Administrator for Cloud Kicks needs to ensure that only the financial records belonging to each individual user are visible on the report in order to meet data privacy requirements. How should the administrator achieve this?", options: ["A. Set sharing model as Public Read/Write for the respective object(s).", "B. Set sharing model as Private for the respective object(s).", "C. Create multiple reports, each filtered to show records owned by each user.", "D. Use Apex sharing to hide records."], ans: ["B"], hook: "Users see only their own records" },
+      { id: 97, req: 1, q: "One of the sales managers at Universal Containers will be going on leave for several months. The executives want to make sure the sales manager does not log in to Salesforce while on leave. What should a Platform Administrator do?", options: ["A. Reassign the user's license during leave.", "B. Change the Login Hours for the profile.", "C. Freeze the user's account.", "D. Restrict Login IP Addresses for the profile."], ans: ["C"], hook: "Blocks login without deactivating" },
+      { id: 100, req: 1, q: "The client services and customer support teams share the same profile but have different permission sets. The custom object Retention related list needs to be restricted to the client services team on the Lightning record page layout. What should a Platform Administrator use?", options: ["A. Page Layout Assignment", "B. Component Visibility", "C. Record Type Assignment", "D. Sharing Settings"], ans: ["B"], hook: "Show a component by permission set" },
+      { id: 106, req: 1, q: "A Platform Administrator at Universal Containers is asked to restrict login access for users to specific hours and specific IP addresses. Which setting should the administrator update?", options: ["A. Company Settings", "B. The user's role", "C. The user's profile", "D. Custom permission sets"], ans: ["C"], hook: "Login hours and IP ranges live there" },
+      { id: 113, req: 1, q: "Cloud Kicks has a new Platform Administrator who is asked to put together a memo detailing Salesforce usage to budget for upcoming license purchases. Where should the administrator go to find out what type of licenses CK has purchased and how many are available?", options: ["A. Usage-based entitlements related list in company information", "B. Search for licenses types in setup", "C. User licenses related list in company information", "D. User management settings in setup"], ans: ["C"], hook: "License counts" },
+      { id: 117, req: 2, q: "A user at Northern Trail Outfitters has attempted to log in multiple times and has been locked out of the organization. Which two steps should a Platform Administrator take to help the user log in?", options: ["A. Log in as the user to unlock the user and reset the password.", "B. Use the unlock button on the user's record detail page.", "C. Reset password on the user's record detail page.", "D. Reset the password policies to allow the user to login."], ans: ["B", "C"], hook: "Both on the user record" },
+      { id: 118, req: 1, q: "Service reps in a call center sit at any available desk and use the computer on that desk to access Salesforce. A Platform Administrator has been asked to streamline the login process so the reps do not have to authenticate each time they log in at a different computer. Which function should the administrator use?", options: ["A. Custom Profile", "B. Trusted IP Ranges", "C. Multi-factor Authentication", "D. Permission Set"], ans: ["B"], hook: "Skips verification at known locations" },
+      { id: 119, req: 1, q: "Universal Containers has two sales teams, sales team A and sales team B. Each team has their own role in the role hierarchy under the same Manager role. How should a Platform Administrator share records owned by sales team A with sales team B?", options: ["A. Criteria-based sharing", "B. Owner-based sharing", "C. Hierarchical sharing", "D. Manual sharing"], ans: ["B"], hook: "A rule shares A's records with B" },
+      { id: 122, req: 1, q: "A Platform Administrator at Cloud Kicks is trying to set up a new user but receives an error about a duplicate username when trying to save the user record. What is causing this error?", options: ["A. The username was not configured in the format of an email address.", "B. The email address and username must be unique across all Salesforce orgs.", "C. The username must be unique across all Salesforce orgs.", "D. The username has a restricted domain name within it."], ans: ["C"], hook: "Not the email" },
+      { id: 127, req: 1, q: "There are multiple system administrators at Cloud Kicks that make configuration changes. Which tool gives the system administrators the ability to track these changes?", options: ["A. Health Check", "B. Setup Audit Trail", "C. History Tracking", "D. Feed Tracking"], ans: ["B"], hook: "Tracks admin changes" },
+      { id: 132, req: 1, q: "The sales reps at Cloud Kicks should be able to report on each other's account and opportunity records with the organization-wide default for Account and Opportunity both set to Private. What should a Platform Administrator do?", options: ["A. Create an owner-based sharing rule for Accounts with sharing between a Public Group of Sales Reps and Read Only Opportunity Access.", "B. Create an Account and Opportunity report to show any owned by each member of the Sales Team and save the report into a shared report folder.", "C. Utilize Apex sharing to programmatically share records between a group of Sales Rep users.", "D. Create manual sharing to share specific account and opportunity records between the sales reps."], ans: ["A"], hook: "Reps can report on each other's records" },
+      { id: 142, req: 1, q: "A Platform Administrator at Universal Containers is trying to deactivate a user who has left the company but is unable to do so. What is preventing the administrator from deactivating this user?", options: ["A. The user is the running user of a dashboard.", "B. The user is part of an active case assignment rule.", "C. The user is part of an Opportunity team.", "D. The user is part of an Account team."], ans: ["A"], hook: "Blocks deactivation" }
+    ]
+  },
+
+  // ================= CATEGORY 7: CASE MANAGEMENT =================
+  {
+    category: "7. Case Management",
+    questions: [
+      { id: 2, req: 1, q: "Universal Containers wants to ensure that cases are routed to the right people at the right time. The business wants to move people around and adjust the work they get without relying on administrator teams. Which tool allows the business to control its own assignment of work?", options: ["A. Case Assignment Rules", "B. Email-to-Case", "C. Omni-Channel", "D. Lead Assignment Rules"], ans: ["C"], hook: "Business controls its own routing" },
+      { id: 14, req: 2, q: "Which two actions should a Platform Administrator perform with Case escalation rules?", options: ["A. Send email notifications.", "B. Change the Case Priority.", "C. Reopen the Case.", "D. Reassign the Case."], ans: ["A", "D"], hook: "Escalation rule actions" },
+      { id: 15, req: 1, q: "Northern Trail Outfitters wants emails received from customers to generate cases automatically. How should a Platform Administrator ensure that the emails are sent to the correct queue?", options: ["A. Create an escalation rule to send cases to the correct queue.", "B. Use a custom email service to set the owner of the case upon creation.", "C. Utilize a flow to identify the correct queue and assign the case.", "D. Configure Email-to-Case so emails are delivered to the correct queue."], ans: ["D"], hook: "Delivers to the queue" },
+      { id: 16, req: 1, q: "Leadership at Cloud Kicks wants to go beyond knowing how long a case has been open for, to knowing how long a case has sat with different teams. Which tool gives a Platform Administrator the ability to track the time a case sits and provide relevant reporting?", options: ["A. Escalation Rules with Business Hours", "B. Record-Triggered Flows with Business Hours", "C. Case Assignment Rules with Business Hours", "D. Milestones with Business Hours"], ans: ["D"], hook: "Time spent per team" },
+      { id: 21, req: 1, q: "At Cloud Kicks, cases are being assigned a default Case Owner and showing a Created By and Last Modified By that is not expected. CK wants to change this to an integration user. What should a Platform Administrator edit?", options: ["A. Process Automation Settings", "B. Debug Logs", "C. Support Processes", "D. Support Settings"], ans: ["D"], hook: "Default Case Owner and automated case user live in Support Settings" },
+      { id: 25, req: 1, q: "Ursa Major Solar classifies its accounts as Silver, Gold, or Platinum Level. Silver or Gold cases should go to the Regular Support Queue, and Platinum cases should automatically go to the Priority Support Queue. What should a Platform Administrator use?", options: ["A. Escalation Rules", "B. Assignment Rules", "C. Case Rules", "D. Workflow Rules"], ans: ["B"], hook: "Routes by account level" },
+      { id: 71, req: 1, q: "Cloud Kicks wants to make sure clients are getting the attention they need and cases are not sitting longer than the SLA. Which standard feature helps route cases to a Tier 2 team if they have not been addressed in a specific amount of time?", options: ["A. Milestone and Entitlements", "B. Omni Channel Routing", "C. Auto Response Rules", "D. Escalation Rules"], ans: ["D"], hook: "Time-based reassign or notify" },
+      { id: 77, req: 1, q: "Cloud Kicks needs to change the owner of a case when it has been open for more than 7 days. What should a Platform Administrator use?", options: ["A. Escalation Rules", "B. Auto Response Rules", "C. Assignment Rules", "D. Validation Rules"], ans: ["A"], hook: "Time-based reassign or notify" },
+      { id: 94, req: 1, q: "Cloud Kicks wants to ensure that every client has support based on the level of service agreed on in the sales cycle (Gold, Silver, and Bronze). What should a Platform Administrator create to ensure that this is part of every client's account once they become a client?", options: ["A. A flow to assign Entitlements", "B. Routing Configuration for each client", "C. Email to Case for each service level", "D. Case Assignment Rules for each client"], ans: ["A"], hook: "Auto-attach service tiers" },
+      { id: 107, req: 1, q: "Ursa Major Solar wants to automatically notify a manager about any cases awaiting a response from an agent for more than 2 hours after case creation. Which feature should a Platform Administrator use?", options: ["A. Assignment Rule", "B. Case Escalation Rule", "C. Formula field", "D. Omni-Channel Supervisor"], ans: ["B"], hook: "Time-based reassign or notify" },
+      { id: 123, req: 1, q: "Universal Containers wants to send all unassigned cases that have been open for more than 2 hours to an urgent Case queue and alert the support manager. Which feature should a Platform Administrator configure?", options: ["A. Case Scheduled Reports", "B. Case Dashboard Refreshes", "C. Case Escalation Rules", "D. Case Assignment Rules"], ans: ["C"], hook: "Time-based reassign or notify" },
+      { id: 126, req: 1, q: "At Cloud Kicks, when a rep needs to seek additional support help, there's a series of actions the company wants to ensure are taken, including sending an email and changing the status and owner of the case. What should a Platform Administrator use?", options: ["A. Case Assignment Rules", "B. Macros with Quick Actions", "C. Quick Text with Email Templates", "D. Autolaunched Flows with Email Alerts"], ans: ["B"], hook: "One-click multi-step updates" },
+      { id: 149, req: 1, q: "The CTO of AW Computing has defined a new policy where cases with a Case Reason of Installation must be acknowledged immediately via email and assigned to agents, and any cases still in New status after 4 hours must be escalated to support management. Auto-response rules are implemented. Which additional tool is necessary?", options: ["A. Formulas", "B. Escalation Rules", "C. Support Processes", "D. Entitlements"], ans: ["B"], hook: "Time-based reassign or notify" }
+    ]
+  },
+
+  // ================= CATEGORY 8: AUTOMATION & FLOW =================
+  {
+    category: "8. Automation & Flow",
+    questions: [
+      { id: 9, req: 1, q: "At Cloud Kicks, sales reps use discounts on the opportunity record. When an opportunity is won, they have to manually apply the discount to the related opportunity products. What should a Platform Administrator use to automate this task?", options: ["A. Approval Process", "B. Formula Field", "C. Flow Builder", "D. Prebuilt Macro"], ans: ["C"], hook: "Automate the discount copy" },
+      { id: 32, req: 1, q: "A Platform Administrator at Universal Containers needs an automated way to delete records based on field values. Which automated solution should the administrator use?", options: ["A. Flow Builder", "B. Automation Studio", "C. Mass Delete Records", "D. Flow Orchestration"], ans: ["A"], hook: "Automated delete (Mass Delete is manual)" },
+      { id: 43, req: 1, q: "A Platform Administrator at Universal Containers has a screen flow that helps users create new leads. When Lead Source is \"Search Engine\", the user must choose a specific search engine from a picklist; otherwise, this picklist should be hidden. What is the most efficient way to complete this?", options: ["A. Use a conditional filter in the screen element to only show the Specific Search Engine field only when Lead Source is \"Search Engine\".", "B. Use Assignment elements; one for when Lead Source is \"Search Engine\" and one for everything else.", "C. Create a picklist for Specific Search Engine, and set conditional visibility so that it is only shown when Lead Source is \"Search Engine\".", "D. Configure a picklist for Specific Search Engine, and use a validation rule to conditionally show only when Lead Source is \"Search Engine\"."], ans: ["C"], hook: "Show or hide a field" },
+      { id: 56, req: 1, q: "A Platform Administrator at Cloud Kicks has a flow in production that is supposed to create new records. However, no new records are being created. What is causing the issue?", options: ["A. The flow is inactive.", "B. The flow URL is deactivated.", "C. The flow is Read Only.", "D. The flow trigger is missing."], ans: ["A"], hook: "Check this first" },
+      { id: 66, req: 1, q: "Universal Containers requires that when an opportunity is closed won, all other open opportunities on the same account must be rendered as Closed Lost. Which automation solution should a Platform Administrator use?", options: ["A. Flow Builder", "B. Outbound Message", "C. Flow Orchestration", "D. Quick Action"], ans: ["A"], hook: "Update related records" },
+      { id: 69, req: 1, q: "Marketing users at Cloud Kicks have been completing the Lead Source field inconsistently, with values like Web, Website, and Online. Which Flow should the administrator use to clean up these inconsistent Lead Source values?", options: ["A. Segment triggered flow", "B. Record triggered flow", "C. Schedule-triggered flow", "D. Screen flow"], ans: ["C"], hook: "Bulk cleanup" },
+      { id: 70, req: 1, q: "Cloud Kicks has an automated business process it wants to run once a week to count the number of open cases related to an Account. Which flow should a Platform Administrator recommend?", options: ["A. Scheduled flow", "B. Record triggered flow", "C. Autolaunched flow", "D. Automation event triggered flow"], ans: ["A"], hook: "Runs weekly" },
+      { id: 86, req: 1, q: "Northern Trail Outfitters has a new flow that automatically sets field values when a new account is created. The flow is launched by a process, but the flow is not working properly. What should a Platform Administrator do to identify the problem?", options: ["A. View the Setup Audit Trail and review for errors.", "B. Set up email logs and review the send error logs.", "C. Use the native debug feature in Flow Builder.", "D. Review debug logs with the flow logging level."], ans: ["C"], hook: "Debug a flow here" },
+      { id: 151, req: 1, q: "When a sales rep clicks a button on an opportunity, a simple discount calculator screen should be launched. Which automation tool should a Platform Administrator use to build this discount calculator screen?", options: ["A. Batch Apps", "B. Flow Builder", "C. OmniStudio", "D. Platform Event"], ans: ["B"], hook: "Screen flow in Flow Builder" }
+    ]
+  },
+
+  // ================= CATEGORY 9: DATA MANAGEMENT =================
+  {
+    category: "9. Data Management",
+    questions: [
+      { id: 17, req: 1, q: "A Platform Administrator at Cloud Kicks needs to export a file of closed won opportunities from the last 90 days including Opportunity Name, ID, Close Date, and Amount. What should the administrator use?", options: ["A. Data Loader", "B. Data Import Wizard", "C. Data Cloud Connection", "D. Data Export Service"], ans: ["A"], hook: "Export with a filter" },
+      { id: 27, req: 1, q: "A sales rep has a list of 300 accounts with contacts that they want to load at one time. Which tool should a Platform Administrator utilize? (Q27 version)", options: ["A. Dataloader.io", "B. Manual Import", "C. Data Import Wizard", "D. Data Loader"], ans: ["C"], hook: "Small, up to 50k records, accounts + contacts" },
+      { id: 87, req: 1, q: "A sales rep has left the company, and a Platform Administrator has been asked to re-assign all their accounts and opportunities to a new sales rep and keep the team as is. Which tool should the administrator use?", options: ["A. Data Loader", "B. Dataloader.io", "C. Mass Transfer Records", "D. Data Import Wizard"], ans: ["C"], hook: "Reassign accounts and opportunities" },
+      { id: 91, req: 1, q: "A sales rep has a list of 300 accounts with contacts that they want to load at one time. Which tool should a Platform Administrator utilize? (Q91 version)", options: ["A. Manual Import", "B. Data Import Wizard", "C. Dataloader.io", "D. Data Loader"], ans: ["B"], hook: "Small, up to 50k records, accounts + contacts" },
+      { id: 143, req: 2, q: "A Platform Administrator at Ursa Major Solar imported records into an object by mistake. Which two tools should the administrator use to undo this import?", options: ["A. Weekly Data Export", "B. Data Loader", "C. Data Import Wizard", "D. Mass Delete Records"], ans: ["B", "D"], hook: "The Import Wizard can't undo" },
+      { id: 153, req: 1, q: "A Platform Administrator needs to import 65,000 new records into a custom object. Which tool should the administrator use?", options: ["A. Data Import Wizard", "B. Data Loader", "C. Schema Builder", "D. Rest API"], ans: ["B"], hook: "65k is over the Wizard's 50k limit" }
+    ]
+  },
+
+  // ================= CATEGORY 10: UI, MOBILE, SETUP & MISC =================
+  {
+    category: "10. UI, Mobile, Setup & Misc",
+    questions: [
+      { id: 5, req: 1, q: "Cloud Kicks has hired a new sales executive who wants to implement a document merge solution in Salesforce. How should a Platform Administrator implement this solution?", options: ["A. Download the solution from AppExchange.", "B. Install a package from the Partner Portal.", "C. Create a managed package in AppExchange.", "D. Configure the package from Salesforce Setup."], ans: ["A"], hook: "Prebuilt, fast and cheap" },
+      { id: 6, req: 1, q: "How should a Platform Administrator view Currencies, Fiscal Year settings, and Business Hours in Salesforce?", options: ["A. User Management Settings", "B. Company Settings", "C. Custom Settings", "D. Feature Settings"], ans: ["B"], hook: "Currency, fiscal year, hours" },
+      { id: 20, req: 1, q: "A Platform Administrator wants to customize the navigation menu for users in the Salesforce mobile app. The organization has not yet implemented any Lightning apps for mobile use. Which statement about the Mobile Only app navigation is correct?", options: ["A. Lightning pages and Visualforce pages automatically appear in the Mobile Only navigation menu without requiring tabs to be created first.", "B. The Mobile Only app can be customized to show different navigation menus for different user profiles and permission sets.", "C. The first four items in the Mobile Only navigation menu appear both in the navigation menu and in the navigation bar at the bottom of the screen.", "D. The Mobile Only app automatically includes all standard Salesforce objects in the navigation menu based on user permissions."], ans: ["C"], hook: "Mobile Only app first four items" },
+      { id: 23, req: 1, q: "A Platform Administrator needs to create a new prompt template to automatically summarize customer cases for a sales team and dynamically populate the response with data from the case record. What should the administrator use?", options: ["A. Flow", "B. Picklists", "C. Agent Instructions", "D. Merge Fields"], ans: ["D"], hook: "Pull in record data" },
+      { id: 28, req: 1, q: "Once an opportunity reaches the negotiation stage at Cloud Kicks, the Amount field becomes required for sales users. Sales managers need to be able to move opportunities into this stage without knowing the amount. How should a Platform Administrator configure this?", options: ["A. Make the field required for all users.", "B. Assign the Administrator profile to the managers.", "C. Configure a validation rule to meet the criteria.", "D. Create a formula field to fill in the field for managers."], ans: ["C"], hook: "Role-based exceptions in the formula" },
+      { id: 38, req: 2, q: "An administrator at DreamHouse Realty needs to create customized pages for the Salesforce mobile app. Which two types of pages should a Platform Administrator build and customize using the Lightning App Builder?", options: ["A. App page", "B. User page", "C. Record page", "D. Dashboard page"], ans: ["A", "C"], hook: "Lightning App Builder types" },
+      { id: 44, req: 1, q: "The Activity Timeline is missing from the Account record page. What should a Platform Administrator do to correct this?", options: ["A. Add the standard Activities component to the Account Lightning record page.", "B. Update the user's permission to allow Edit access to the Activity Timeline.", "C. Run a report to verify whether any activities have been logged for that Account.", "D. Add a button for the Activity Timeline in the Object Manager for the Account object."], ans: ["A"], hook: "Missing timeline" },
+      { id: 59, req: 1, q: "A Platform Administrator has reviewed an upcoming critical update. How should the administrator proceed with activation of the critical update?", options: ["A. Allow the critical update to auto-activate in a sandbox.", "B. Activate the critical update in production.", "C. Activate the critical update in a sandbox.", "D. Allow the critical update to auto-activate."], ans: ["C"], hook: "Test in sandbox first" },
+      { id: 62, req: 1, q: "A Platform Administrator for Cloud Kicks has created a screen flow to help service reps ask the same set of questions when customers call in with issues. This screen should be visible from cases. How should the administrator distribute the screen flow?", options: ["A. Page Layout", "B. Home Page", "C. Lightning Page", "D. Component Filter"], ans: ["C"], hook: "Place the screen flow" },
+      { id: 68, req: 1, q: "Ursa Major Solar wants a place within Salesforce to discuss sensitive records. UMS would like to be able to add new members but does not want non-members to be able to see any information about the forum. What should a Platform Administrator configure?", options: ["A. Chatter Unlisted Group", "B. Chatter Private Group", "C. Chatter Public Group", "D. Private Chatter Channel"], ans: ["B"], hook: "Members only (Study guide marks Private Chatter Group)" },
+      { id: 74, req: 1, q: "Users have reported that the new Lightning account record page is loading very slowly. Which feature should a Platform Administrator use to determine the cause of the performance issues?", options: ["A. Lightning Analytics", "B. Lightning Usage App", "C. Lightning Page Visibility Rule", "D. Lightning App Builder Analytics"], ans: ["D"], hook: "Page performance" },
+      { id: 82, req: 1, q: "Cloud Kicks wants users to only be able to choose the opportunity stage Closed Won if the Lead source has been selected. How should a Platform Administrator accomplish this goal?", options: ["A. Make Lead source a dependent picklist to the Opportunity Stage field.", "B. Change the Opportunity Stage field to Read Only on the page layout.", "C. Configure a validation rule requiring Lead source when the stage is set to Closed Won.", "D. Make the opportunity stage a dependent picklist to the Lead source."], ans: ["C"], hook: "Conditional requirement" },
+      { id: 83, req: 2, q: "Which two solutions is a Platform Administrator able to find on AppExchange to enhance their organization?", options: ["A. Components", "B. Customers", "C. Communities", "D. Consultants"], ans: ["A", "D"], hook: "On AppExchange" },
+      { id: 88, req: 1, q: "Ursa Major Solar has its business hours set from 9:00 AM to 5:00 PM for the reps on Pacific Time. The reps on Eastern Time need business hours set to start 3 hours earlier. How should a Platform Administrator solve for this issue?", options: ["A. Adjust the current business hours to accommodate the Eastern time zone.", "B. Allow the reps to set business hours manually.", "C. Set temporary business hours for each time zone.", "D. Create one set of business hours per time zone."], ans: ["D"], hook: "Time zones need separate sets" },
+      { id: 90, req: 1, q: "Users at Cloud Kicks want to see information that is more useful for their role on the Case page. How should a Platform Administrator make the pages more dynamic and easier to use?", options: ["A. Add component visibility filters to the components.", "B. Include more tab components with filters.", "C. Remove fields from the record details component.", "D. Delete the extra components from the page."], ans: ["A"], hook: "Role-specific pages" },
+      { id: 92, req: 2, q: "Cloud Kicks is working on a rebrand. In which two areas of the Salesforce mobile app can a Platform Administrator customize the branding?", options: ["A. App header color", "B. Record background color", "C. Loading page logo", "D. Header background color"], ans: ["A", "C"], hook: "Mobile branding" },
+      { id: 104, req: 1, q: "DreamHouse Realty wants a templated process with a mortgage calculator that generates leads for loans, needs to complete the project within 30 days, and has maxed out its budget. Which AppExchange item should help?", options: ["A. Bolt Solutions", "B. Lightning Community", "C. Lightning Data", "D. Flow Solutions"], ans: ["A"], hook: "Prebuilt, fast and cheap" },
+      { id: 111, req: 1, q: "Cloud Kicks will be hiring 10 sales reps and 15 support reps. The support team will need access to the Service Console to manage cases. How should the administrator ensure the support reps have the appropriate access to the console?", options: ["A. Enable the Service Cloud User feature license for the support reps on the User Detail page.", "B. Create a permission set for the Service Console and assign it to the support reps.", "C. Build a Service Console using Lightning App Builder for the custom service profile.", "D. Assign the Salesforce Platform User License to the support reps."], ans: ["A"], hook: "Console access" },
+      { id: 114, req: 1, q: "Northern Trail Outfitters wants to ensure new Contacts are validated before they can be saved. If a user selects that the LeadSource picklist value is Other, NTO also wants to populate a custom text field called Source__c. Which validation rule should a Platform Administrator configure?", options: ["A. AND(LeadSource = 'Other', Source__c = '')", "B. AND(NOT(LeadSource = 'Other'), NOT(Source__c = ''))", "C. AND(ISPICKVAL(LeadSource, 'Other'), ISBLANK(Source__c))", "D. AND(NOT(ISPICKVAL(LeadSource, 'Other')), NOT(ISBLANK(Source__c)))"], ans: ["C"], hook: "Picklists need ISPICKVAL, blanks need ISBLANK" },
+      { id: 116, req: 1, q: "Ursa Major Solar wants to roll out the Salesforce mobile app, and the first information it wants its users to see is the Top Opportunities report. What should a Platform Administrator configure?", options: ["A. Add the Reports tab to the Salesforce mobile app.", "B. Enable Today for the Salesforce mobile app.", "C. Enable Mobile Home for the Salesforce mobile app.", "D. Add the Dashboards tab to the Salesforce mobile app."], ans: ["C"], hook: "First screen in mobile" },
+      { id: 120, req: 1, q: "Cloud Kicks' management team is hoping to increase user productivity by switching to consoles instead of the current traditional Salesforce user interface. What should a Platform Administrator use?", options: ["A. App Builder", "B. Screen Flow", "C. App Manager", "D. Omni-Channel"], ans: ["C"], hook: "Console navigation" },
+      { id: 128, req: 1, q: "A salesperson complains that the Log a Call button is missing from the highlights panel of an Opportunity page. What is the reason for this?", options: ["A. The Log a Call action will appear within the Activity Component as a standard behavior rather than the highlights panel.", "B. The Log a Call action has not been added to the Salesforce Mobile and Lightning Experience Actions section of the page layout.", "C. The custom Log a Call permission is missing from the user's profile and assigned permission sets.", "D. The custom Log a Call permission has been disabled at the org level in Setup."], ans: ["B"], hook: "Missing button" },
+      { id: 133, req: 1, q: "Ursa Major Solar wants to see collaboration and updates across various Chatter groups, records, and announcements from the CEO in a single place. What should a Platform Administrator configure?", options: ["A. Chatter Group", "B. Chatter Daily Digest", "C. Chatter Feed", "D. Chatter Stream"], ans: ["C"], hook: "One place for all updates (Study guide lists Chatter Feed; Chatter Stream also combines feeds)" },
+      { id: 137, req: 1, q: "The VP of sales at AW Computing would like sales reps to check in with their top account every Monday. What should a Platform Administrator configure to remind the reps to contact their top account?", options: ["A. Create a time-based workflow task.", "B. Enable the creation of recurring tasks.", "C. Add the email action to the page layout.", "D. Use a process email alert on the account."], ans: ["B"], hook: "Weekly reminder" },
+      { id: 150, req: 1, q: "The marketing director at Northern Trail Outfitters has requested that the Budget field be populated in order for the Lead Status field to be marked as qualified. Which tool should a Platform Administrator use?", options: ["A. Require Field", "B. Workflow Rule", "C. Validation Rule", "D. Lead Conversion"], ans: ["C"], hook: "Conditional requirement" }
+    ]
+  }
+];
+
+// ================= STATE =================
+let currentMode = "category"; // 'category' or 'mock'
+let currentCatIndex = 0;
+let userState = {}; // For Category Practice: key = `${catIdx}-${qId}`
+
+// Separate state for 55-Question Mock Exam
+const MOCK_COUNT = 55;
+const PASS_PERCENT = 70; // 70% of 55 = 38.5 -> 39 questions
+let mockQuestions = [];
+let mockState = {}; // key = mockIndex (0..54)
+
+// Fisher-Yates shuffle helper
+function shuffleArray(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function init() {
+  renderNav();
+  renderCategory(0);
+  updateScoreUI();
+  generateNewMockExam(false);
+}
+
+// ================= MODE SWITCHING =================
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById("tabCatBtn").classList.toggle("active", mode === "category");
+  document.getElementById("tabMockBtn").classList.toggle("active", mode === "mock");
+
+  document.getElementById("catTopBar").classList.toggle("hidden", mode !== "category");
+  document.getElementById("categoryView").classList.toggle("hidden", mode !== "category");
+
+  document.getElementById("mockTopBar").classList.toggle("hidden", mode !== "mock");
+  document.getElementById("mockView").classList.toggle("hidden", mode !== "mock");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ================= CATEGORY PRACTICE LOGIC =================
+function renderNav() {
+  const nav = document.getElementById("catNav");
+  nav.innerHTML = "";
+  QUIZ_DATA.forEach((cat, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "cat-btn" + (idx === currentCatIndex ? " active" : "");
+    btn.textContent = `${cat.category} (${cat.questions.length})`;
+    btn.onclick = () => {
+      currentCatIndex = idx;
+      renderNav();
+      renderCategory(idx);
+      updateScoreUI();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    nav.appendChild(btn);
+  });
+}
+
+function shuffleCurrentCategory() {
+  QUIZ_DATA[currentCatIndex].questions = shuffleArray(QUIZ_DATA[currentCatIndex].questions);
+  renderCategory(currentCatIndex);
+}
+
+function renderCategory(catIdx) {
+  const cat = QUIZ_DATA[catIdx];
+  document.getElementById("catTitle").textContent = `${cat.category} (${cat.questions.length} Questions)`;
+  const container = document.getElementById("questionsContainer");
+  container.innerHTML = "";
+
+  cat.questions.forEach((qObj) => {
+    const stateKey = `${catIdx}-${qObj.id}`;
+    const saved = userState[stateKey] || { selected: [], checked: false, isCorrect: false };
+
+    const card = document.createElement("div");
+    card.className = "q-card";
+
+    const title = document.createElement("div");
+    title.className = "q-title";
+    title.innerHTML = `<span class="badge">Select ${qObj.req}</span> Q${qObj.id}. ${qObj.q}`;
+    card.appendChild(title);
+
+    const optList = document.createElement("div");
+    optList.className = "options-list";
+
+    qObj.options.forEach((optText) => {
+      const letter = optText.charAt(0);
+      const label = document.createElement("label");
+      label.className = "opt-label";
+      if (saved.checked) {
+        if (qObj.ans.includes(letter)) label.classList.add("correct");
+        else if (saved.selected.includes(letter)) label.classList.add("wrong");
+      }
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = letter;
+      input.checked = saved.selected.includes(letter);
+      input.disabled = saved.checked;
+
+      input.onchange = () => {
+        if (!userState[stateKey]) {
+          userState[stateKey] = { selected: [], checked: false, isCorrect: false };
+        }
+        const sel = userState[stateKey].selected;
+        if (input.checked) {
+          if (!sel.includes(letter)) sel.push(letter);
+        } else {
+          userState[stateKey].selected = sel.filter((x) => x !== letter);
+        }
+      };
+
+      const span = document.createElement("span");
+      span.textContent = optText;
+
+      label.appendChild(input);
+      label.appendChild(span);
+      optList.appendChild(label);
+    });
+
+    card.appendChild(optList);
+
+    const checkBtn = document.createElement("button");
+    checkBtn.className = "btn-check";
+    checkBtn.textContent = saved.checked ? "Answered" : "Check Answer";
+    checkBtn.disabled = saved.checked;
+    checkBtn.onclick = () => checkAnswer(catIdx, qObj);
+    card.appendChild(checkBtn);
+
+    const fb = document.createElement("div");
+    fb.className = "feedback" + (saved.checked ? (saved.isCorrect ? " pass" : " fail") : "");
+    if (saved.checked) {
+      fb.innerHTML = `${saved.isCorrect ? "✅ Correct!" : "❌ Incorrect."} <strong>Answer: ${qObj.ans.join(", ")}</strong> — <em>Memory Hook: ${qObj.hook}</em>`;
+    }
+    card.appendChild(fb);
+
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(catIdx, qObj) {
+  const stateKey = `${catIdx}-${qObj.id}`;
+  const current = userState[stateKey] || { selected: [], checked: false, isCorrect: false };
+  if (current.selected.length === 0) {
+    alert(`Please select ${qObj.req} option(s) first.`);
+    return;
+  }
+
+  const selSorted = [...current.selected].sort().join(",");
+  const ansSorted = [...qObj.ans].sort().join(",");
+  current.checked = true;
+  current.isCorrect = selSorted === ansSorted;
+  userState[stateKey] = current;
+
+  renderCategory(catIdx);
+  updateScoreUI();
+}
+
+function updateScoreUI() {
+  const cat = QUIZ_DATA[currentCatIndex];
+  let catAnswered = 0;
+  let catCorrect = 0;
+  cat.questions.forEach((qObj) => {
+    const st = userState[`${currentCatIndex}-${qObj.id}`];
+    if (st && st.checked) {
+      catAnswered++;
+      if (st.isCorrect) catCorrect++;
+    }
+  });
+  const catPct = catAnswered > 0 ? Math.round((catCorrect / catAnswered) * 100) : 0;
+  document.getElementById("catScore").textContent = `Category: ${catCorrect} / ${catAnswered} (${catPct}%)`;
+
+  let totalAnswered = 0;
+  let totalCorrect = 0;
+  QUIZ_DATA.forEach((c, cIdx) => {
+    c.questions.forEach((qObj) => {
+      const st = userState[`${cIdx}-${qObj.id}`];
+      if (st && st.checked) {
+        totalAnswered++;
+        if (st.isCorrect) totalCorrect++;
+      }
+    });
+  });
+  const totalPct = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+  document.getElementById("totalScore").textContent = `Total: ${totalCorrect} / ${totalAnswered} (${totalPct}%)`;
+}
+
+function resetCurrentCategory() {
+  const cat = QUIZ_DATA[currentCatIndex];
+  cat.questions.forEach((qObj) => {
+    delete userState[`${currentCatIndex}-${qObj.id}`];
+  });
+  renderCategory(currentCatIndex);
+  updateScoreUI();
+}
+
+function resetAllCategories() {
+  userState = {};
+  renderCategory(currentCatIndex);
+  updateScoreUI();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ================= 55-QUESTION MOCK EXAM LOGIC =================
+function generateNewMockExam(scrollTop = true) {
+  const allPool = [];
+  QUIZ_DATA.forEach((cat) => {
+    cat.questions.forEach((qObj) => {
+      allPool.push({ ...qObj, categoryName: cat.category });
+    });
+  });
+
+  mockQuestions = shuffleArray(allPool).slice(0, MOCK_COUNT);
+  mockState = {};
+  document.getElementById("mockResultBanner").className = "mock-banner";
+  document.getElementById("mockResultBanner").innerHTML = "";
+
+  renderMockExam();
+  updateMockScoreUI();
+  if (scrollTop) window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderMockExam() {
+  const container = document.getElementById("mockQuestionsContainer");
+  container.innerHTML = "";
+
+  mockQuestions.forEach((qObj, mIdx) => {
+    const saved = mockState[mIdx] || { selected: [], checked: false, isCorrect: false };
+
+    const card = document.createElement("div");
+    card.className = "q-card";
+
+    const title = document.createElement("div");
+    title.className = "q-title";
+    title.innerHTML = `<span class="badge">Mock #${mIdx + 1} • Select ${qObj.req}</span><span class="badge-cat">${qObj.categoryName}</span> (Q${qObj.id}) ${qObj.q}`;
+    card.appendChild(title);
+
+    const optList = document.createElement("div");
+    optList.className = "options-list";
+
+    qObj.options.forEach((optText) => {
+      const letter = optText.charAt(0);
+      const label = document.createElement("label");
+      label.className = "opt-label";
+      if (saved.checked) {
+        if (qObj.ans.includes(letter)) label.classList.add("correct");
+        else if (saved.selected.includes(letter)) label.classList.add("wrong");
+      }
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = letter;
+      input.checked = saved.selected.includes(letter);
+      input.disabled = saved.checked;
+
+      input.onchange = () => {
+        if (!mockState[mIdx]) {
+          mockState[mIdx] = { selected: [], checked: false, isCorrect: false };
+        }
+        const sel = mockState[mIdx].selected;
+        if (input.checked) {
+          if (!sel.includes(letter)) sel.push(letter);
+        } else {
+          mockState[mIdx].selected = sel.filter((x) => x !== letter);
+        }
+        updateMockScoreUI();
+      };
+
+      const span = document.createElement("span");
+      span.textContent = optText;
+
+      label.appendChild(input);
+      label.appendChild(span);
+      optList.appendChild(label);
+    });
+
+    card.appendChild(optList);
+
+    const checkBtn = document.createElement("button");
+    checkBtn.className = "btn-check";
+    checkBtn.textContent = saved.checked ? "Graded" : "Check Answer";
+    checkBtn.disabled = saved.checked;
+    checkBtn.onclick = () => checkSingleMockAnswer(mIdx);
+    card.appendChild(checkBtn);
+
+    const fb = document.createElement("div");
+    fb.className = "feedback" + (saved.checked ? (saved.isCorrect ? " pass" : " fail") : "");
+    if (saved.checked) {
+      fb.innerHTML = `${saved.isCorrect ? "✅ Correct!" : "❌ Incorrect."} <strong>Answer: ${qObj.ans.join(", ")}</strong> — <em>Memory Hook: ${qObj.hook}</em>`;
+    }
+    card.appendChild(fb);
+
+    container.appendChild(card);
+  });
+}
+
+function checkSingleMockAnswer(mIdx) {
+  const qObj = mockQuestions[mIdx];
+  const current = mockState[mIdx] || { selected: [], checked: false, isCorrect: false };
+  if (current.selected.length === 0) {
+    alert(`Please select ${qObj.req} option(s) first.`);
+    return;
+  }
+
+  const selSorted = [...current.selected].sort().join(",");
+  const ansSorted = [...qObj.ans].sort().join(",");
+  current.checked = true;
+  current.isCorrect = selSorted === ansSorted;
+  mockState[mIdx] = current;
+
+  renderMockExam();
+  updateMockScoreUI();
+}
+
+function gradeAllMock() {
+  mockQuestions.forEach((qObj, mIdx) => {
+    const current = mockState[mIdx] || { selected: [], checked: false, isCorrect: false };
+    const selSorted = [...current.selected].sort().join(",");
+    const ansSorted = [...qObj.ans].sort().join(",");
+    current.checked = true;
+    current.isCorrect = current.selected.length > 0 && selSorted === ansSorted;
+    mockState[mIdx] = current;
+  });
+
+  renderMockExam();
+  updateMockScoreUI(true);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function updateMockScoreUI(forceBanner = false) {
+  let selectedCount = 0;
+  let checkedCount = 0;
+  let correctCount = 0;
+
+  mockQuestions.forEach((_, mIdx) => {
+    const st = mockState[mIdx];
+    if (st) {
+      if (st.selected.length > 0) selectedCount++;
+      if (st.checked) {
+        checkedCount++;
+        if (st.isCorrect) correctCount++;
+      }
+    }
+  });
+
+  const pctOfTotal = ((correctCount / MOCK_COUNT) * 100).toFixed(1);
+  document.getElementById("mockProgress").textContent = `Selected: ${selectedCount} / ${MOCK_COUNT} (Graded: ${checkedCount})`;
+  document.getElementById("mockScore").textContent = `Score: ${correctCount} / ${MOCK_COUNT} (${pctOfTotal}%)`;
+
+  const badge = document.getElementById("mockPassBadge");
+  const passed = (correctCount / MOCK_COUNT) * 100 >= PASS_PERCENT;
+
+  if ( passed ) {
+    badge.className = "status-pill status-pass";
+    badge.textContent = `✅ PASSED (${pctOfTotal}% • >= 70%)`;
+  } else if (checkedCount === MOCK_COUNT) {
+    badge.className = "status-pill status-fail";
+    badge.textContent = `❌ FAILED (${pctOfTotal}% • Need 70% / 39)`;
+  } else {
+    badge.className = "status-pill status-progress";
+    badge.textContent = `Pass Target: 70% (39 / 55 Correct)`;
+  }
+
+  const banner = document.getElementById("mockResultBanner");
+  if (forceBanner || checkedCount === MOCK_COUNT) {
+    if (passed) {
+      banner.className = "mock-banner pass";
+      banner.innerHTML = `<strong>🎉 Congratulations! You Passed the Mock Exam!</strong><br>You scored <strong>${correctCount} / ${MOCK_COUNT} (${pctOfTotal}%)</strong>, meeting the 70% (39/55) passing requirement.`;
+    } else {
+      banner.className = "mock-banner fail";
+      banner.innerHTML = `<strong>📚 Keep Practicing — Not Quite at 70% Yet</strong><br>You scored <strong>${correctCount} / ${MOCK_COUNT} (${pctOfTotal}%)</strong>. You need at least <strong>39 / 55 (70%)</strong> to pass. Review the red questions below or click "New 55-Q Mock Exam" to try another set!`;
+    }
+  }
+}
+
+init();
+</script>
+</body>
+</html>
